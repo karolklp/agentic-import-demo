@@ -1,0 +1,38 @@
+{% extends 'practice/base.html' %}
+
+{% block title %}Matters - Law Firm Practice Management{% endblock %}
+
+{% block content %}
+<h1>Matters</h1>
+
+<div class="card">
+    <table>
+        <thead>
+            <tr>
+                <th>Matter #</th>
+                <th>Title</th>
+                <th>Client</th>
+                <th>Practice Area</th>
+                <th>Lead Attorney</th>
+                <th>Status</th>
+                <th>Billing</th>
+                <th>Opened</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for matter in matters %}
+            <tr>
+                <td><a href="{% url 'matter_detail' matter.id %}" class="link">{{ matter.matter_number }}</a></td>
+                <td>{{ matter.title }}</td>
+                <td><a href="{% url 'client_detail' matter.client.id %}" class="link">{{ matter.client.name }}</a></td>
+                <td>{{ matter.practice_area.name }}</td>
+                <td><a href="{% url 'attorney_detail' matter.lead_attorney.id %}" class="link">{{ matter.lead_attorney }}</a></td>
+                <td><span class="badge badge-{{ matter.status }}">{{ matter.get_status_display }}</span></td>
+                <td>{{ matter.get_billing_type_display }}</td>
+                <td>{{ matter.opened_date|date:"M d, Y" }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

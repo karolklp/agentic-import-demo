@@ -1,0 +1,11 @@
+Client Number,Client Name,Type,Email Address,Phone,Address,Tax ID,Status,Joined Date
+CL-2024-001,TechVenture Solutions,business,legal@techventure.com,555-8001,"123 Innovation Dr, San Francisco, CA",45-9876543,Active,01/15/2024
+CL-2024-002,Maria Rodriguez,individual,maria.r@email.com,555-8002,"456 Oak Avenue, Los Angeles, CA",,Active,15-01-2024
+CL-2024-003,GRAYSTONE ENTERPRISES,Business,contact@graystone.com,555-8003,"789 Corporate Blvd, New York, NY",67-1234567,active,2024-01-20
+CL-2024-004,David Chen,Individual,d.chen@emailprovider.com,(555) 800-4004,"321 Maple Street, Chicago, IL",,Active,Jan 22 2024
+CL-2024-005,Sustainable Energy Co,business,info@sustainenergy.com,5558005,"654 Green Way, Austin, TX",78-9012345,Active,2024/01/25
+CL-2024-006,Community Health Foundation,nonprofit,director@commhealth.org,555.800.6000,"987 Charity Lane, Boston, MA",89-0123456,Active,28-01-2024
+CL-2024-007,Jennifer Martinez,individual,j.martinez@mail.com,555-8007,"147 Birch Road, Seattle, WA",,active,2024-02-01
+CL-2024-008,GrayStone Enterprises LLC,business,legal@graystoneent.com,555-8008,"789 Corporate Boulevard, New York, NY",67-1234567,Active,02/05/2024
+CL-2024-009,Robert Thompson,individual,r.thompson@email.net,+1-555-800-9000,"258 Pine Avenue, Denver, CO",,Active,2024-02-10
+CL-2024-010,FutureTech Innovations,Business,contact@futuretech.io,555-8010,"369 Tech Park, Palo Alto, CA",90-1234567,Active,15/02/2024

@@ -1,0 +1,429 @@
+{% extends 'practice/base.html' %}
+
+{% block title %}Import Monitor #{{ job.id }} - Law Firm Practice Management{% endblock %}
+
+{% block content %}
+<h1>Import Job #{{ job.id }}</h1>
+
+<div class="card">
+    <div class="detail-grid">
+        <div class="detail-item">
+            <span class="detail-label">Status</span>
+            <span class="detail-value"><span class="badge badge-{{ job.status }}" id="job-status">{{ job.get_status_display }}</span></span>
+        </div>
+        <div class="detail-item">
+            <span class="detail-label">Files Uploaded</span>
+            <span class="detail-value">{{ job.files_uploaded }}</span>
+        </div>
+        <div class="detail-item">
+            <span class="detail-label">Records Processed</span>
+            <span class="detail-value" id="records-processed">{{ job.records_processed }}</span>
+        </div>
+        <div class="detail-item">
+            <span class="detail-label">Records Imported</span>
+            <span class="detail-value" id="records-imported">{{ job.records_imported }}</span>
+        </div>
+        <div class="detail-item">
+            <span class="detail-label">Records Skipped</span>
+            <span class="detail-value" id="records-skipped">{{ job.records_skipped }}</span>
+        </div>
+        <div class="detail-item">
+            <span class="detail-label">Errors</span>
+            <span class="detail-value" id="errors-count">{{ job.errors_count }}</span>
+        </div>
+        <div class="detail-item">
+            <span class="detail-label">Created</span>
+            <span class="detail-value">{{ job.created_at|date:"M d, Y H:i:s" }}</span>
+        </div>
+        <div class="detail-item">
+            <span class="detail-label">Duration</span>
+            <span class="detail-value" id="duration">
+                {% if job.completed_at and job.started_at %}
+                    {{ job.completed_at|timeuntil:job.started_at }}
+                {% elif job.started_at %}
+                    Running...
+                {% else %}
+                    Not started
+                {% endif %}
+            </span>
+        </div>
+    </div>
+</div>
+
+{% if pending_questions %}
+<div class="section">
+    <h2 style="color: #ea580c;">Pending Questions ({{ pending_questions.count }})</h2>
+    {% for question in pending_questions %}
+    <div class="card" style="border-left: 4px solid #ea580c;">
+        <h3 style="margin-bottom: 1rem;">{{ question.question_text }}</h3>
+        {% if question.context %}
+        <p style="background: #f7fafc; padding: 1rem; border-radius: 4px; margin-bottom: 1rem;">{{ question.context }}</p>
+        {% endif %}
+
+        <form method="post" action="{% url 'import_question_answer' job.id question.id %}" class="answer-form" data-question-id="{{ question.id }}">
+            {% csrf_token %}
+            <div style="margin-bottom: 1rem;">
+                {% if question.question_type == 'yes_no' %}
+                    <button type="button" class="answer-btn" data-answer="yes" style="background: #16a34a; color: white; padding: 0.5rem 1rem; border: none; border-radius: 4px; margin-right: 0.5rem; cursor: pointer;">Yes</button>
+                    <button type="button" class="answer-btn" data-answer="no" style="background: #dc2626; color: white; padding: 0.5rem 1rem; border: none; border-radius: 4px; cursor: pointer;">No</button>
+                {% elif question.question_type == 'choice' and question.options %}
+                    {% for option in question.options %}
+                    <button type="button" class="answer-btn" data-answer="{{ option }}" style="background: #2563eb; color: white; padding: 0.5rem 1rem; border: none; border-radius: 4px; margin-right: 0.5rem; margin-bottom: 0.5rem; cursor: pointer;">{{ option }}</button>
+                    {% endfor %}
+                {% else %}
+                    <textarea name="answer" rows="3" style="width: 100%; padding: 0.5rem; border: 1px solid #cbd5e0; border-radius: 4px; font-family: inherit;"></textarea>
+                {% endif %}
+                <input type="hidden" name="answer" class="hidden-answer">
+            </div>
+            <button type="submit" style="background: #2563eb; color: white; padding: 0.5rem 1.5rem; border: none; border-radius: 4px; cursor: pointer;">Submit Answer</button>
+        </form>
+    </div>
+    {% endfor %}
+</div>
+{% endif %}
+
+<div class="section">
+    <h2>Import Log</h2>
+    <div class="card">
+        <div style="display: flex; gap: 0.5rem; margin-bottom: 1rem;">
+            <button class="filter-btn active" data-level="all" style="padding: 0.5rem 1rem; border: 1px solid #cbd5e0; background: #2563eb; color: white; border-radius: 4px; cursor: pointer;">All</button>
+            <button class="filter-btn" data-level="INFO" style="padding: 0.5rem 1rem; border: 1px solid #cbd5e0; background: white; border-radius: 4px; cursor: pointer;">Info</button>
+            <button class="filter-btn" data-level="THINKING" style="padding: 0.5rem 1rem; border: 1px solid #cbd5e0; background: white; border-radius: 4px; cursor: pointer;">Thinking</button>
+            <button class="filter-btn" data-level="DECISION" style="padding: 0.5rem 1rem; border: 1px solid #cbd5e0; background: white; border-radius: 4px; cursor: pointer;">Decisions</button>
+            <button class="filter-btn" data-level="WARNING" style="padding: 0.5rem 1rem; border: 1px solid #cbd5e0; background: white; border-radius: 4px; cursor: pointer;">Warnings</button>
+            <button class="filter-btn" data-level="ERROR" style="padding: 0.5rem 1rem; border: 1px solid #cbd5e0; background: white; border-radius: 4px; cursor: pointer;">Errors</button>
+        </div>
+
+        <div id="log-container" style="background: #1e293b; color: #e2e8f0; padding: 1rem; border-radius: 4px; font-family: 'Courier New', monospace; font-size: 0.875rem; max-height: 600px; overflow-y: auto;">
+            <div id="log-entries"></div>
+        </div>
+    </div>
+</div>
+
+<!-- Highlight.js for syntax highlighting -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/python.min.js"></script>
+
+<!-- Marked.js for markdown parsing -->
+<script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+
+<style>
+.log-entry {
+    line-height: 1.6;
+    font-family: 'SF Mono', Monaco, 'Cascadia Code', 'Roboto Mono', Consolas, 'Courier New', monospace;
+    font-size: 0.9rem;
+    white-space: pre-wrap;
+    word-break: break-word;
+}
+
+.matrix-line {
+    animation: slideIn 0.1s ease-out;
+}
+
+@keyframes slideIn {
+    from {
+        transform: translateX(-10px);
+        opacity: 0;
+    }
+    to {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
+
+.log-entry pre {
+    background: #0d1117 !important;
+    border: 1px solid #30363d;
+    border-radius: 6px;
+    padding: 1rem;
+    margin: 0.5rem 0;
+    overflow-x: auto;
+}
+
+.log-entry code {
+    font-family: 'SF Mono', Monaco, 'Cascadia Code', 'Roboto Mono', Consolas, 'Courier New', monospace;
+    font-size: 0.85rem;
+}
+
+.log-entry p {
+    margin: 0.25rem 0;
+}
+
+.log-entry h1, .log-entry h2, .log-entry h3 {
+    color: #58a6ff;
+    margin: 0.75rem 0 0.5rem 0;
+}
+
+.log-entry ul, .log-entry ol {
+    margin: 0.5rem 0;
+    padding-left: 2rem;
+}
+
+.log-entry blockquote {
+    border-left: 3px solid #58a6ff;
+    padding-left: 1rem;
+    margin: 0.5rem 0;
+    color: #8b949e;
+}
+
+.log-entry strong {
+    color: #58a6ff;
+    font-weight: 600;
+}
+
+.log-entry em {
+    color: #f0883e;
+}
+
+.log-entry a {
+    color: #58a6ff;
+    text-decoration: none;
+}
+
+.log-entry a:hover {
+    text-decoration: underline;
+}
+
+/* Syntax highlighting customization */
+.hljs {
+    background: #0d1117 !important;
+    color: #c9d1d9 !important;
+}
+
+.hljs-comment {
+    color: #8b949e !important;
+}
+
+.hljs-keyword {
+    color: #ff7b72 !important;
+}
+
+.hljs-string {
+    color: #a5d6ff !important;
+}
+
+.hljs-number {
+    color: #79c0ff !important;
+}
+
+.hljs-function {
+    color: #d2a8ff !important;
+}
+</style>
+
+<div class="section" style="display: none;">
+    <h2>Import Log (Old)</h2>
+    <div class="card">
+        <div style="display: flex; gap: 0.5rem; margin-bottom: 1rem;">
+            <button class="filter-btn active" data-level="all" style="padding: 0.5rem 1rem; border: 1px solid #cbd5e0; background: #2563eb; color: white; border-radius: 4px; cursor: pointer;">All</button>
+            <button class="filter-btn" data-level="INFO" style="padding: 0.5rem 1rem; border: 1px solid #cbd5e0; background: white; border-radius: 4px; cursor: pointer;">Info</button>
+            <button class="filter-btn" data-level="THINKING" style="padding: 0.5rem 1rem; border: 1px solid #cbd5e0; background: white; border-radius: 4px; cursor: pointer;">Thinking</button>
+            <button class="filter-btn" data-level="DECISION" style="padding: 0.5rem 1rem; border: 1px solid #cbd5e0; background: white; border-radius: 4px; cursor: pointer;">Decisions</button>
+            <button class="filter-btn" data-level="WARNING" style="padding: 0.5rem 1rem; border: 1px solid #cbd5e0; background: white; border-radius: 4px; cursor: pointer;">Warnings</button>
+            <button class="filter-btn" data-level="ERROR" style="padding: 0.5rem 1rem; border: 1px solid #cbd5e0; background: white; border-radius: 4px; cursor: pointer;">Errors</button>
+        </div>
+
+        <div id="log-container-old" style="background: #1e293b; color: #e2e8f0; padding: 1rem; border-radius: 4px; font-family: 'Courier New', monospace; font-size: 0.875rem; max-height: 600px; overflow-y: auto;">
+            <div id="log-entries-old"></div>
+        </div>
+    </div>
+</div>
+
+<script>
+// Log filtering
+let currentFilter = 'all';
+document.querySelectorAll('.filter-btn').forEach(btn => {
+    btn.addEventListener('click', function() {
+        document.querySelectorAll('.filter-btn').forEach(b => {
+            b.style.background = 'white';
+            b.style.color = 'black';
+            b.classList.remove('active');
+        });
+        this.style.background = '#2563eb';
+        this.style.color = 'white';
+        this.classList.add('active');
+        currentFilter = this.dataset.level;
+        filterLogs();
+    });
+});
+
+function filterLogs() {
+    const entries = document.querySelectorAll('.log-entry');
+    entries.forEach(entry => {
+        if (currentFilter === 'all' || entry.dataset.level === currentFilter) {
+            entry.style.display = 'block';
+        } else {
+            entry.style.display = 'none';
+        }
+    });
+}
+
+// Answer form handling
+document.querySelectorAll('.answer-btn').forEach(btn => {
+    btn.addEventListener('click', function() {
+        const form = this.closest('form');
+        const hiddenInput = form.querySelector('.hidden-answer');
+        const textarea = form.querySelector('textarea[name="answer"]');
+
+        // Set the answer value
+        if (hiddenInput) {
+            hiddenInput.value = this.dataset.answer;
+        } else if (textarea) {
+            textarea.value = this.dataset.answer;
+        }
+
+        // Trigger the form submit event (which will use AJAX handler)
+        form.dispatchEvent(new Event('submit', { cancelable: true }));
+    });
+});
+
+document.querySelectorAll('.answer-form').forEach(form => {
+    form.addEventListener('submit', function(e) {
+        e.preventDefault();
+
+        const formData = new FormData(this);
+        const answer = formData.get('answer') || this.querySelector('.hidden-answer')?.value;
+
+        if (!answer) {
+            alert('Please provide an answer');
+            return;
+        }
+
+        formData.set('answer', answer);
+
+        fetch(this.action, {
+            method: 'POST',
+            body: formData
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                this.closest('.card').style.display = 'none';
+                location.reload();
+            }
+        });
+    });
+});
+
+// Poll for status updates
+function updateStatus() {
+    fetch('{% url "import_status" job.id %}')
+        .then(response => response.json())
+        .then(data => {
+            document.getElementById('records-processed').textContent = data.records_processed;
+            document.getElementById('records-imported').textContent = data.records_imported;
+            document.getElementById('records-skipped').textContent = data.records_skipped;
+            document.getElementById('errors-count').textContent = data.errors_count;
+
+            if (data.status !== '{{ job.status }}') {
+                location.reload();
+            }
+        });
+}
+
+// Poll every 2 seconds
+setInterval(updateStatus, 2000);
+
+// Configure marked.js
+marked.setOptions({
+    highlight: function(code, lang) {
+        if (lang && hljs.getLanguage(lang)) {
+            return hljs.highlight(code, { language: lang }).value;
+        }
+        return hljs.highlightAuto(code).value;
+    },
+    breaks: true,
+    gfm: true
+});
+
+// Load and display logs - MATRIX STYLE, NO BUFFERING
+let lastLogId = 0;
+
+function loadLogs() {
+    // Fetch logs from database
+    fetch(`/import/api/logs/?job_id={{ job.id }}&after_id=${lastLogId}`)
+        .then(response => response.json())
+        .then(logs => {
+            const logContainer = document.getElementById('log-entries');
+            const scrollContainer = document.getElementById('log-container');
+
+            logs.forEach(log => {
+                if (log.id > lastLogId) {
+                    // Stream each line immediately - no buffering!
+                    const logLine = document.createElement('div');
+                    logLine.className = 'log-entry matrix-line';
+                    logLine.dataset.level = log.level;
+                    logLine.style.opacity = '0';
+                    logLine.style.transition = 'opacity 0.15s ease-in';
+
+                    const levelBadge = getMatrixBadge(log.level);
+
+                    // Raw text, no markdown parsing for speed
+                    const cleanMessage = escapeHtml(log.message);
+
+                    logLine.innerHTML = `${levelBadge} <span style="color: #e2e8f0;">${cleanMessage}</span>`;
+
+                    logContainer.appendChild(logLine);
+
+                    // Fade in effect
+                    requestAnimationFrame(() => {
+                        logLine.style.opacity = '1';
+                    });
+
+                    lastLogId = log.id;
+                }
+            });
+
+            // Auto-scroll to bottom instantly (no smooth scroll - faster!)
+            scrollContainer.scrollTop = scrollContainer.scrollHeight;
+
+            // Apply filter
+            filterLogs();
+        })
+        .catch(error => console.error('Error loading logs:', error));
+}
+
+function getMatrixBadge(level) {
+    const badges = {
+        'DEBUG': '<span style="color: #64748b;">▪</span>',
+        'INFO': '<span style="color: #3b82f6;">▸</span>',
+        'SUCCESS': '<span style="color: #10b981;">✓</span>',
+        'WARNING': '<span style="color: #f59e0b;">⚠</span>',
+        'ERROR': '<span style="color: #ef4444;">✗</span>',
+        'THINKING': '<span style="color: #8b5cf6;">💭</span>',
+        'DECISION': '<span style="color: #06b6d4;">→</span>'
+    };
+    return badges[level] || '<span style="color: #3b82f6;">▸</span>';
+}
+
+function escapeHtml(text) {
+    const div = document.createElement('div');
+    div.textContent = text;
+    return div.innerHTML;
+}
+
+function getLevelBadge(level) {
+    const badges = {
+        'DEBUG': '<span style="color: #94a3b8;">[DEBUG]</span>',
+        'INFO': '<span style="color: #3b82f6;">[INFO]</span>',
+        'SUCCESS': '<span style="color: #10b981;">[✓]</span>',
+        'WARNING': '<span style="color: #f59e0b;">[⚠]</span>',
+        'ERROR': '<span style="color: #ef4444;">[✗]</span>',
+        'THINKING': '<span style="color: #8b5cf6;">[💭]</span>',
+        'DECISION': '<span style="color: #06b6d4;">[→]</span>'
+    };
+    return badges[level] || `[${level}]`;
+}
+
+function escapeHtml(text) {
+    const div = document.createElement('div');
+    div.textContent = text;
+    return div.innerHTML;
+}
+
+// Load logs every 2 seconds
+loadLogs();
+setInterval(loadLogs, 2000);
+</script>
+{% endblock %}

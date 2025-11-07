@@ -1,0 +1,119 @@
+{% extends 'practice/base.html' %}
+
+{% block title %}{{ invoice.invoice_number }} - Invoices{% endblock %}
+
+{% block content %}
+<h1>Invoice {{ invoice.invoice_number }}</h1>
+
+<div class="card">
+    <div class="detail-grid">
+        <div class="detail-item">
+            <span class="detail-label">Client</span>
+            <span class="detail-value"><a href="{% url 'client_detail' invoice.client.id %}" class="link">{{ invoice.client.name }}</a></span>
+        </div>
+        <div class="detail-item">
+            <span class="detail-label">Matter</span>
+            <span class="detail-value"><a href="{% url 'matter_detail' invoice.matter.id %}" class="link">{{ invoice.matter.matter_number }}</a></span>
+        </div>
+        <div class="detail-item">
+            <span class="detail-label">Invoice Date</span>
+            <span class="detail-value">{{ invoice.invoice_date|date:"M d, Y" }}</span>
+        </div>
+        <div class="detail-item">
+            <span class="detail-label">Due Date</span>
+            <span class="detail-value">{{ invoice.due_date|date:"M d, Y" }}</span>
+        </div>
+        <div class="detail-item">
+            <span class="detail-label">Status</span>
+            <span class="detail-value"><span class="badge badge-{{ invoice.status }}">{{ invoice.get_status_display }}</span></span>
+        </div>
+        <div class="detail-item">
+            <span class="detail-label">Subtotal</span>
+            <span class="detail-value">${{ invoice.subtotal|floatformat:2 }}</span>
+        </div>
+        <div class="detail-item">
+            <span class="detail-label">Tax</span>
+            <span class="detail-value">${{ invoice.tax_amount|floatformat:2 }}</span>
+        </div>
+        <div class="detail-item">
+            <span class="detail-label">Total</span>
+            <span class="detail-value">${{ invoice.total_amount|floatformat:2 }}</span>
+        </div>
+        <div class="detail-item">
+            <span class="detail-label">Paid</span>
+            <span class="detail-value">${{ invoice.paid_amount|floatformat:2 }}</span>
+        </div>
+        <div class="detail-item">
+            <span class="detail-label">Balance Due</span>
+            <span class="detail-value">${{ invoice.balance_due|floatformat:2 }}</span>
+        </div>
+    </div>
+
+    {% if invoice.notes %}
+    <div class="detail-item" style="margin-top: 1rem;">
+        <span class="detail-label">Notes</span>
+        <span class="detail-value">{{ invoice.notes }}</span>
+    </div>
+    {% endif %}
+</div>
+
+<div class="section">
+    <h2>Line Items</h2>
+    <div class="card">
+        <table>
+            <thead>
+                <tr>
+                    <th>Type</th>
+                    <th>Description</th>
+                    <th>Quantity</th>
+                    <th>Rate</th>
+                    <th>Amount</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for item in line_items %}
+                <tr>
+                    <td>{{ item.get_item_type_display }}</td>
+                    <td>{{ item.description }}</td>
+                    <td>{{ item.quantity }}</td>
+                    <td>${{ item.rate|floatformat:2 }}</td>
+                    <td>${{ item.amount|floatformat:2 }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<div class="section">
+    <h2>Payments</h2>
+    <div class="card">
+        <table>
+            <thead>
+                <tr>
+                    <th>Date</th>
+                    <th>Amount</th>
+                    <th>Method</th>
+                    <th>Reference</th>
+                    <th>Notes</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for payment in payments %}
+                <tr>
+                    <td>{{ payment.payment_date|date:"M d, Y" }}</td>
+                    <td>${{ payment.amount|floatformat:2 }}</td>
+                    <td>{{ payment.get_payment_method_display }}</td>
+                    <td>{{ payment.reference_number|default:"N/A" }}</td>
+                    <td>{{ payment.notes|default:"N/A" }}</td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="5" style="text-align: center; color: #666;">No payments recorded</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

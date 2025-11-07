@@ -1,0 +1,145 @@
+{% extends 'practice/base.html' %}
+
+{% block title %}{{ attorney.full_name }} - Attorneys{% endblock %}
+
+{% block content %}
+<h1>{{ attorney.full_name }}</h1>
+
+<div class="card">
+    <div class="detail-grid">
+        <div class="detail-item">
+            <span class="detail-label">Employee ID</span>
+            <span class="detail-value">{{ attorney.employee_id }}</span>
+        </div>
+        <div class="detail-item">
+            <span class="detail-label">Level</span>
+            <span class="detail-value">{{ attorney.get_level_display }}</span>
+        </div>
+        <div class="detail-item">
+            <span class="detail-label">Email</span>
+            <span class="detail-value">{{ attorney.email }}</span>
+        </div>
+        <div class="detail-item">
+            <span class="detail-label">Bar Number</span>
+            <span class="detail-value">{{ attorney.bar_number }}</span>
+        </div>
+        <div class="detail-item">
+            <span class="detail-label">Hourly Rate</span>
+            <span class="detail-value">${{ attorney.hourly_rate|floatformat:2 }}</span>
+        </div>
+        <div class="detail-item">
+            <span class="detail-label">Hire Date</span>
+            <span class="detail-value">{{ attorney.hire_date|date:"M d, Y" }}</span>
+        </div>
+        <div class="detail-item">
+            <span class="detail-label">Total Hours</span>
+            <span class="detail-value">{{ total_hours|floatformat:2 }}</span>
+        </div>
+        <div class="detail-item">
+            <span class="detail-label">Total Billed</span>
+            <span class="detail-value">${{ total_billed|floatformat:2 }}</span>
+        </div>
+    </div>
+
+    <div class="detail-item" style="margin-top: 1rem;">
+        <span class="detail-label">Practice Areas</span>
+        <span class="detail-value">
+            {% for area in attorney.practice_areas.all %}
+                {{ area.name }}{% if not forloop.last %}, {% endif %}
+            {% endfor %}
+        </span>
+    </div>
+</div>
+
+<div class="section">
+    <h2>Lead Matters</h2>
+    <div class="card">
+        <table>
+            <thead>
+                <tr>
+                    <th>Matter #</th>
+                    <th>Title</th>
+                    <th>Client</th>
+                    <th>Practice Area</th>
+                    <th>Status</th>
+                    <th>Opened</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for matter in lead_matters %}
+                <tr>
+                    <td><a href="{% url 'matter_detail' matter.id %}" class="link">{{ matter.matter_number }}</a></td>
+                    <td>{{ matter.title }}</td>
+                    <td><a href="{% url 'client_detail' matter.client.id %}" class="link">{{ matter.client.name }}</a></td>
+                    <td>{{ matter.practice_area.name }}</td>
+                    <td><span class="badge badge-{{ matter.status }}">{{ matter.get_status_display }}</span></td>
+                    <td>{{ matter.opened_date|date:"M d, Y" }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<div class="section">
+    <h2>Recent Time Entries</h2>
+    <div class="card">
+        <table>
+            <thead>
+                <tr>
+                    <th>Date</th>
+                    <th>Matter</th>
+                    <th>Service</th>
+                    <th>Hours</th>
+                    <th>Rate</th>
+                    <th>Amount</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for entry in time_entries %}
+                <tr>
+                    <td>{{ entry.date|date:"M d, Y" }}</td>
+                    <td><a href="{% url 'matter_detail' entry.matter.id %}" class="link">{{ entry.matter.matter_number }}</a></td>
+                    <td>{{ entry.service.name }}</td>
+                    <td>{{ entry.hours }}</td>
+                    <td>${{ entry.hourly_rate|floatformat:2 }}</td>
+                    <td>${{ entry.total_amount|floatformat:2 }}</td>
+                    <td><span class="badge badge-{{ entry.status }}">{{ entry.get_status_display }}</span></td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<div class="section">
+    <h2>Recent Expenses</h2>
+    <div class="card">
+        <table>
+            <thead>
+                <tr>
+                    <th>Date</th>
+                    <th>Matter</th>
+                    <th>Category</th>
+                    <th>Amount</th>
+                    <th>Billable</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for expense in expenses %}
+                <tr>
+                    <td>{{ expense.date|date:"M d, Y" }}</td>
+                    <td><a href="{% url 'matter_detail' expense.matter.id %}" class="link">{{ expense.matter.matter_number }}</a></td>
+                    <td>{{ expense.category }}</td>
+                    <td>${{ expense.amount|floatformat:2 }}</td>
+                    <td>{% if expense.is_billable %}Yes{% else %}No{% endif %}</td>
+                    <td><span class="badge badge-{{ expense.status }}">{{ expense.get_status_display }}</span></td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

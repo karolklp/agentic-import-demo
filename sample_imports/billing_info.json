@@ -1,0 +1,94 @@
+{
+  "invoices": [
+    {
+      "invoice_id": "INV-2024-001",
+      "matter": "MAT-2024-100",
+      "client": "CL-2024-001",
+      "invoice_date": "2024-03-31",
+      "due_date": "04/30/2024",
+      "line_items": [
+        {
+          "description": "Legal services for February-March 2024",
+          "quantity": 14.0,
+          "rate": 475.00,
+          "amount": 6650.00,
+          "type": "time"
+        }
+      ],
+      "subtotal": 6650.00,
+      "tax_rate": 0.08,
+      "tax_amount": 532.00,
+      "total": 7182.00,
+      "status": "sent"
+    },
+    {
+      "invoice_id": "INV-2024-002",
+      "matter": "MAT-2024-101",
+      "client": "GrayStone Enterprises",
+      "invoice_date": "31-03-2024",
+      "due_date": "2024-04-30",
+      "line_items": [
+        {
+          "description": "Legal research and court representation",
+          "quantity": 9.0,
+          "rate": 285.00,
+          "amount": 2565.00,
+          "type": "time"
+        },
+        {
+          "description": "Court filing fees",
+          "quantity": 1,
+          "rate": 425.00,
+          "amount": 425.00,
+          "type": "expense"
+        }
+      ],
+      "subtotal": 2990.00,
+      "tax_rate": 0.08,
+      "tax_amount": 239.20,
+      "total": 3229.20,
+      "status": "Sent"
+    },
+    {
+      "invoice_id": "INV-2024-003",
+      "matter": "MAT-2024-102",
+      "client": "CL-2024-002",
+      "invoice_date": "March 31, 2024",
+      "due_date": "April 30, 2024",
+      "line_items": [
+        {
+          "description": "Estate planning flat fee",
+          "quantity": 1.0,
+          "rate": 15000.00,
+          "amount": 15000.00,
+          "type": "flat_fee"
+        }
+      ],
+      "subtotal": 15000.00,
+      "tax_rate": 0.00,
+      "tax_amount": 0.00,
+      "total": 15000.00,
+      "status": "paid"
+    }
+  ],
+  "payments": [
+    {
+      "payment_id": "PAY-2024-001",
+      "invoice": "INV-2024-003",
+      "client": "CL-2024-002",
+      "amount": 15000.00,
+      "payment_date": "2024-04-05",
+      "method": "wire",
+      "reference": "WIRE-789456123"
+    },
+    {
+      "payment_id": "PAY-2024-002",
+      "invoice": "INV-2024-001",
+      "client": "TechVenture Solutions",
+      "amount": 3500.00,
+      "payment_date": "15-04-2024",
+      "method": "Check",
+      "reference": "CHK-45678"
+    }
+  ]
+}

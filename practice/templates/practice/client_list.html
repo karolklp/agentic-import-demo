@@ -1,0 +1,38 @@
+{% extends 'practice/base.html' %}
+
+{% block title %}Clients - Law Firm Practice Management{% endblock %}
+
+{% block content %}
+<h1>Clients</h1>
+
+<div class="card">
+    <table>
+        <thead>
+            <tr>
+                <th>Client #</th>
+                <th>Name</th>
+                <th>Type</th>
+                <th>Email</th>
+                <th>Phone</th>
+                <th>Matters</th>
+                <th>Open Matters</th>
+                <th>Status</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for client in clients %}
+            <tr>
+                <td><a href="{% url 'client_detail' client.id %}" class="link">{{ client.client_number }}</a></td>
+                <td>{{ client.name }}</td>
+                <td>{{ client.get_client_type_display }}</td>
+                <td>{{ client.email }}</td>
+                <td>{{ client.phone }}</td>
+                <td>{{ client.matter_count }}</td>
+                <td>{{ client.open_matter_count }}</td>
+                <td>{% if client.is_active %}<span class="badge badge-open">Active</span>{% else %}<span class="badge badge-closed">Inactive</span>{% endif %}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

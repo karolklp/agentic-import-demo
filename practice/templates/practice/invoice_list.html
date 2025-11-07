@@ -1,0 +1,40 @@
+{% extends 'practice/base.html' %}
+
+{% block title %}Invoices - Law Firm Practice Management{% endblock %}
+
+{% block content %}
+<h1>Invoices</h1>
+
+<div class="card">
+    <table>
+        <thead>
+            <tr>
+                <th>Invoice #</th>
+                <th>Client</th>
+                <th>Matter</th>
+                <th>Date</th>
+                <th>Due Date</th>
+                <th>Amount</th>
+                <th>Paid</th>
+                <th>Balance</th>
+                <th>Status</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for invoice in invoices %}
+            <tr>
+                <td><a href="{% url 'invoice_detail' invoice.id %}" class="link">{{ invoice.invoice_number }}</a></td>
+                <td><a href="{% url 'client_detail' invoice.client.id %}" class="link">{{ invoice.client.name }}</a></td>
+                <td><a href="{% url 'matter_detail' invoice.matter.id %}" class="link">{{ invoice.matter.matter_number }}</a></td>
+                <td>{{ invoice.invoice_date|date:"M d, Y" }}</td>
+                <td>{{ invoice.due_date|date:"M d, Y" }}</td>
+                <td>${{ invoice.total_amount|floatformat:2 }}</td>
+                <td>${{ invoice.paid_amount|floatformat:2 }}</td>
+                <td>${{ invoice.balance_due|floatformat:2 }}</td>
+                <td><span class="badge badge-{{ invoice.status }}">{{ invoice.get_status_display }}</span></td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

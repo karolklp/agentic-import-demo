@@ -1,0 +1,88 @@
+{% extends 'practice/base.html' %}
+
+{% block title %}Dashboard - Law Firm Practice Management{% endblock %}
+
+{% block content %}
+<h1>Dashboard</h1>
+
+<div class="stats-grid">
+    <div class="stat-card">
+        <h3>Active Clients</h3>
+        <div class="value">{{ total_clients }}</div>
+    </div>
+    <div class="stat-card">
+        <h3>Open Matters</h3>
+        <div class="value">{{ open_matters }}</div>
+    </div>
+    <div class="stat-card">
+        <h3>Active Attorneys</h3>
+        <div class="value">{{ active_attorneys }}</div>
+    </div>
+    <div class="stat-card">
+        <h3>Outstanding</h3>
+        <div class="value">${{ outstanding_amount|floatformat:2 }}</div>
+    </div>
+</div>
+
+<div class="card">
+    <h2>Recent Matters</h2>
+    <table>
+        <thead>
+            <tr>
+                <th>Matter #</th>
+                <th>Title</th>
+                <th>Client</th>
+                <th>Practice Area</th>
+                <th>Lead Attorney</th>
+                <th>Status</th>
+                <th>Opened</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for matter in recent_matters %}
+            <tr>
+                <td><a href="{% url 'matter_detail' matter.id %}" class="link">{{ matter.matter_number }}</a></td>
+                <td>{{ matter.title }}</td>
+                <td><a href="{% url 'client_detail' matter.client.id %}" class="link">{{ matter.client.name }}</a></td>
+                <td>{{ matter.practice_area.name }}</td>
+                <td><a href="{% url 'attorney_detail' matter.lead_attorney.id %}" class="link">{{ matter.lead_attorney }}</a></td>
+                <td><span class="badge badge-{{ matter.status }}">{{ matter.get_status_display }}</span></td>
+                <td>{{ matter.opened_date|date:"M d, Y" }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+<div class="card">
+    <h2>Recent Invoices</h2>
+    <table>
+        <thead>
+            <tr>
+                <th>Invoice #</th>
+                <th>Client</th>
+                <th>Matter</th>
+                <th>Date</th>
+                <th>Amount</th>
+                <th>Paid</th>
+                <th>Balance</th>
+                <th>Status</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for invoice in recent_invoices %}
+            <tr>
+                <td><a href="{% url 'invoice_detail' invoice.id %}" class="link">{{ invoice.invoice_number }}</a></td>
+                <td><a href="{% url 'client_detail' invoice.client.id %}" class="link">{{ invoice.client.name }}</a></td>
+                <td><a href="{% url 'matter_detail' invoice.matter.id %}" class="link">{{ invoice.matter.matter_number }}</a></td>
+                <td>{{ invoice.invoice_date|date:"M d, Y" }}</td>
+                <td>${{ invoice.total_amount|floatformat:2 }}</td>
+                <td>${{ invoice.paid_amount|floatformat:2 }}</td>
+                <td>${{ invoice.balance_due|floatformat:2 }}</td>
+                <td><span class="badge badge-{{ invoice.status }}">{{ invoice.get_status_display }}</span></td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

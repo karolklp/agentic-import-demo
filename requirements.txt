@@ -1,0 +1,5 @@
+anthropic==0.59.0
+asgiref==3.10.0
+Django==5.2.8
+python-dotenv==1.2.1
+sqlparse==0.5.3

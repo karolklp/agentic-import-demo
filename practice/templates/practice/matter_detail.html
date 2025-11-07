@@ -1,0 +1,183 @@
+{% extends 'practice/base.html' %}
+
+{% block title %}{{ matter.title }} - Matters{% endblock %}
+
+{% block content %}
+<h1>{{ matter.title }}</h1>
+
+<div class="card">
+    <div class="detail-grid">
+        <div class="detail-item">
+            <span class="detail-label">Matter Number</span>
+            <span class="detail-value">{{ matter.matter_number }}</span>
+        </div>
+        <div class="detail-item">
+            <span class="detail-label">Client</span>
+            <span class="detail-value"><a href="{% url 'client_detail' matter.client.id %}" class="link">{{ matter.client.name }}</a></span>
+        </div>
+        <div class="detail-item">
+            <span class="detail-label">Practice Area</span>
+            <span class="detail-value">{{ matter.practice_area.name }}</span>
+        </div>
+        <div class="detail-item">
+            <span class="detail-label">Lead Attorney</span>
+            <span class="detail-value"><a href="{% url 'attorney_detail' matter.lead_attorney.id %}" class="link">{{ matter.lead_attorney }}</a></span>
+        </div>
+        <div class="detail-item">
+            <span class="detail-label">Status</span>
+            <span class="detail-value"><span class="badge badge-{{ matter.status }}">{{ matter.get_status_display }}</span></span>
+        </div>
+        <div class="detail-item">
+            <span class="detail-label">Billing Type</span>
+            <span class="detail-value">{{ matter.get_billing_type_display }}</span>
+        </div>
+        <div class="detail-item">
+            <span class="detail-label">Opened Date</span>
+            <span class="detail-value">{{ matter.opened_date|date:"M d, Y" }}</span>
+        </div>
+        <div class="detail-item">
+            <span class="detail-label">Total Hours</span>
+            <span class="detail-value">{{ total_hours|floatformat:2 }}</span>
+        </div>
+        <div class="detail-item">
+            <span class="detail-label">Time Value</span>
+            <span class="detail-value">${{ total_time_value|floatformat:2 }}</span>
+        </div>
+        <div class="detail-item">
+            <span class="detail-label">Total Expenses</span>
+            <span class="detail-value">${{ total_expenses|floatformat:2 }}</span>
+        </div>
+    </div>
+
+    <div class="detail-item" style="margin-top: 1rem;">
+        <span class="detail-label">Description</span>
+        <span class="detail-value">{{ matter.description }}</span>
+    </div>
+</div>
+
+<div class="section">
+    <h2>Time Entries</h2>
+    <div class="card">
+        <table>
+            <thead>
+                <tr>
+                    <th>Date</th>
+                    <th>Attorney</th>
+                    <th>Service</th>
+                    <th>Hours</th>
+                    <th>Rate</th>
+                    <th>Amount</th>
+                    <th>Status</th>
+                    <th>Description</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for entry in time_entries %}
+                <tr>
+                    <td>{{ entry.date|date:"M d, Y" }}</td>
+                    <td><a href="{% url 'attorney_detail' entry.attorney.id %}" class="link">{{ entry.attorney }}</a></td>
+                    <td>{{ entry.service.name }}</td>
+                    <td>{{ entry.hours }}</td>
+                    <td>${{ entry.hourly_rate|floatformat:2 }}</td>
+                    <td>${{ entry.total_amount|floatformat:2 }}</td>
+                    <td><span class="badge badge-{{ entry.status }}">{{ entry.get_status_display }}</span></td>
+                    <td>{{ entry.description|truncatewords:10 }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<div class="section">
+    <h2>Expenses</h2>
+    <div class="card">
+        <table>
+            <thead>
+                <tr>
+                    <th>Date</th>
+                    <th>Category</th>
+                    <th>Attorney</th>
+                    <th>Amount</th>
+                    <th>Billable</th>
+                    <th>Status</th>
+                    <th>Description</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for expense in expenses %}
+                <tr>
+                    <td>{{ expense.date|date:"M d, Y" }}</td>
+                    <td>{{ expense.category }}</td>
+                    <td><a href="{% url 'attorney_detail' expense.attorney.id %}" class="link">{{ expense.attorney }}</a></td>
+                    <td>${{ expense.amount|floatformat:2 }}</td>
+                    <td>{% if expense.is_billable %}Yes{% else %}No{% endif %}</td>
+                    <td><span class="badge badge-{{ expense.status }}">{{ expense.get_status_display }}</span></td>
+                    <td>{{ expense.description|truncatewords:10 }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<div class="section">
+    <h2>Invoices</h2>
+    <div class="card">
+        <table>
+            <thead>
+                <tr>
+                    <th>Invoice #</th>
+                    <th>Date</th>
+                    <th>Due Date</th>
+                    <th>Amount</th>
+                    <th>Paid</th>
+                    <th>Balance</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for invoice in invoices %}
+                <tr>
+                    <td><a href="{% url 'invoice_detail' invoice.id %}" class="link">{{ invoice.invoice_number }}</a></td>
+                    <td>{{ invoice.invoice_date|date:"M d, Y" }}</td>
+                    <td>{{ invoice.due_date|date:"M d, Y" }}</td>
+                    <td>${{ invoice.total_amount|floatformat:2 }}</td>
+                    <td>${{ invoice.paid_amount|floatformat:2 }}</td>
+                    <td>${{ invoice.balance_due|floatformat:2 }}</td>
+                    <td><span class="badge badge-{{ invoice.status }}">{{ invoice.get_status_display }}</span></td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<div class="section">
+    <h2>Documents</h2>
+    <div class="card">
+        <table>
+            <thead>
+                <tr>
+                    <th>Title</th>
+                    <th>Type</th>
+                    <th>Uploaded By</th>
+                    <th>Date</th>
+                    <th>Confidential</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for doc in documents %}
+                <tr>
+                    <td>{{ doc.title }}</td>
+                    <td>{{ doc.get_document_type_display }}</td>
+                    <td><a href="{% url 'attorney_detail' doc.uploaded_by.id %}" class="link">{{ doc.uploaded_by }}</a></td>
+                    <td>{{ doc.uploaded_date|date:"M d, Y" }}</td>
+                    <td>{% if doc.is_confidential %}<span class="badge badge-overdue">Yes</span>{% else %}No{% endif %}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

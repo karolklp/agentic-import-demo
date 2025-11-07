@@ -1,0 +1,38 @@
+{% extends 'practice/base.html' %}
+
+{% block title %}Attorneys - Law Firm Practice Management{% endblock %}
+
+{% block content %}
+<h1>Attorneys</h1>
+
+<div class="card">
+    <table>
+        <thead>
+            <tr>
+                <th>Employee ID</th>
+                <th>Name</th>
+                <th>Level</th>
+                <th>Email</th>
+                <th>Hourly Rate</th>
+                <th>Lead Matters</th>
+                <th>Total Matters</th>
+                <th>Status</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for attorney in attorneys %}
+            <tr>
+                <td><a href="{% url 'attorney_detail' attorney.id %}" class="link">{{ attorney.employee_id }}</a></td>
+                <td>{{ attorney.full_name }}</td>
+                <td>{{ attorney.get_level_display }}</td>
+                <td>{{ attorney.email }}</td>
+                <td>${{ attorney.hourly_rate|floatformat:2 }}</td>
+                <td>{{ attorney.lead_matter_count }}</td>
+                <td>{{ attorney.total_matters }}</td>
+                <td>{% if attorney.is_active %}<span class="badge badge-open">Active</span>{% else %}<span class="badge badge-closed">Inactive</span>{% endif %}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

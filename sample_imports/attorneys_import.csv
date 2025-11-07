@@ -1,0 +1,7 @@
+EmployeeID,FirstName,LastName,email,Bar #,Level,HireDate,Rate,PracticeAreas
+ATT-101,Rachel,Anderson,rachel.anderson@firm.com,NY-78901,Partner,2015-03-15,475.00,"Corporate Law,Mergers & Acquisitions"
+ATT-102,Michael,Chang,m.chang@firm.com,NY-78902,Senior Associate,01/08/2017,350.00,"Intellectual Property,Litigation"
+ATT-103,Sarah,Williams,sarah.w@firm.com,NY78903,Associate,15-06-2019,285.00,"Real Estate,Corporate Law"
+ATT-104,James,O'Brien,james.obrien@firm.com,NY-78904,partner,2014/11/01,450.00,"Litigation,Employment Law"
+ATT-105,Elena,Kowalski,e.kowalski@firm.com,NY 78905,Senior Associate,March 20 2018,325.00,"Tax Law,Estate Planning"
+ATT-106,Marcus,Johnson,marcus.j@firm.com,NY-78906,Junior Associate,2021-07-15,225.00,"Corporate Law,General Practice"

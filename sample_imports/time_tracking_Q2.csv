@@ -1,0 +1,11 @@
+work_date,matter_reference,attorney_name,service_code,time_spent,rate_charged,work_description,billing_status
+18/03/2024,MAT-2024-106,James O'Brien,CONSULT,3.0,450.00,Client consultation regarding employment dispute,billable
+2024-03-20,MAT-2024-107,Sarah Williams,DRAFT,6.5,285.00,Draft purchase and sale agreement,Billable
+22-03-2024,MAT-2024-104,Rachel Anderson,REVIEW,2.5,475.00,Review regulatory submissions,billable
+March 25 2024,MAT-2024-108,ATT-102,RESEARCH,5.0,350.00,Research trade secret case law,Billable
+2024/03/28,MAT-2024-101,ATT-103,COURT,4.5,285.00,Court hearing for lease dispute,billable
+01-04-2024,MAT-2024-105,Elena Kowalski,FILING,1.5,325.00,File tax exemption application with IRS,Billable
+2024-04-03,MAT-2024-100,ATT-101,NEGO,3.0,475.00,Final negotiation session,billable
+April 5 2024,MAT-2024-102,ATT-105,REVIEW,2.0,325.00,Review and revise estate documents,Billable
+08/04/2024,MAT-2024-106,ATT-104,DEPO,6.0,450.00,Deposition of former employee,billable
+2024-04-10,MAT-2024-103,ATT-102,DRAFT,4.0,350.00,Respond to USPTO office action,Billable

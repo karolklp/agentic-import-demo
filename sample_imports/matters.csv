@@ -1,0 +1,10 @@
+MatterNumber,ClientID,Title,Description,Practice Area,LeadAttorney,Status,BillingType,OpenedDate,EstimatedValue
+MAT-2024-100,CL-2024-001,Software Licensing Agreement,Negotiation and drafting of enterprise software licensing agreement,Corporate Law,ATT-101,Open,Hourly,2024-02-01,75000
+MAT-2024-101,CL-2024-003,Commercial Lease Dispute,Dispute resolution for commercial property lease terms,Real Estate,ATT-103,open,Hourly,01/02/2024,125000
+MAT-2024-102,CL-2024-002,Estate Planning,Comprehensive estate planning including will and trust,Estate Planning,ATT-105,Open,Flat Fee,15-02-2024,15000
+MAT-2024-103,CL-2024-999,Patent Application,Utility patent application for renewable energy technology,Intellectual Property,ATT-102,Open,Hourly,2024-02-20,50000
+MAT-2024-104,CL-2024-005,Regulatory Compliance Review,Review of state and federal environmental regulations,Corporate Law,ATT-101,open,Retainer,Feb 25 2024,90000
+MAT-2024-105,CL-2024-006,Nonprofit Tax Exemption,Application for 501(c)(3) tax-exempt status,Tax Law,ATT-105,Open,Flat Fee,2024/03/01,12000
+MAT-2024-106,CL-2024-008,Employment Dispute,Defense against wrongful termination claim,Employment Law,ATT-104,Open,Contingency,05-03-2024,200000
+MAT-2024-107,CL-2024-004,Real Estate Purchase,Commercial real estate acquisition,Real Estate,ATT-103,Open,Hourly,2024-03-10,350000
+MAT-2024-108,CL-2024-010,Trade Secret Protection,Protection of proprietary technology and trade secrets,Intellectual Property,ATT-102,open,Hourly,15/03/2024,85000
